@@ -1,5 +1,5 @@
 {
-  "name": "private_blockchain",
+  "name": "get_started_concepts",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "crypto-js": "^4.1.1"
+    "crypto-js": "^4.1.1",
+    "express": "^4.17.1"
   }
 }
