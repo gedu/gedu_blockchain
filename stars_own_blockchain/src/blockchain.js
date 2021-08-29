@@ -184,8 +184,6 @@ class Blockchain {
   /**
    * This method will return a Promise that will resolve with the list of errors when validating the chain.
    * Steps to validate:
-   * 1. You should validate each block using `validateBlock`
-   * 2. Each Block should check the with the previousBlockHash
    */
   validateChain() {
     let self = this;
