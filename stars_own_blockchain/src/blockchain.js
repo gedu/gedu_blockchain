@@ -53,17 +53,29 @@ class Blockchain {
     let self = this;
     return new Promise(async (resolve, reject) => {
       try {
-        self.height = self.height === -1 ? 0 : ++self.height;
-        if (self.height > 0) {
-          block.previousBlockHash = this.chain[self.height - 1].hash;
+        const currentHeight = await self.getChainHeight();
+
+        if (currentHeight > -1) {
+          const foundBlock = await self.getBlockByHeight(currentHeight);
+
+          if (foundBlock) {
+            block.previousBlockHash = foundBlock.hash;
+          }
         }
-        block.height = self.height;
-        block.time = new Date().getTime().toString().slice(0, -3); //UTC format
-        block.hash = SHA256(JSON.stringify(block)).toString();
-        self.chain.push(block);
-        resolve(block);
+        const newHeight = currentHeight + 1;
+        const isChainValid = await self.validateChain();
+        if (isChainValid.length === 0) {
+          block.time = new Date().getTime().toString().slice(0, -3); //UTC format
+          block.height = newHeight;
+          block.hash = SHA256(JSON.stringify(block)).toString();
+          self.chain.push(block);
+          self.height = newHeight;
+          resolve(block);
+        } else {
+          reject(isChainValid);
+        }
       } catch (error) {
-        reject(null);
+        reject(error);
       }
     });
   }
@@ -190,8 +202,13 @@ class Blockchain {
     let errorLog = [];
     return new Promise(async (resolve, reject) => {
       try {
+        if (self.height === -1) {
+          resolve(errorLog);
+          return;
+        }
         const legacyBlock = self.chain[0];
         const isLegacyValid = await legacyBlock.validate();
+
         if (!isLegacyValid) {
           errorLog.push("Invalid legacy block");
         }

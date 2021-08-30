@@ -27,7 +27,10 @@ class Block {
     return new Promise((resolve, reject) => {
       try {
         const currentHash = self.hash;
-        const recalculatedHash = SHA256(JSON.stringify(self)).toString();
+        const currentBlock = { ...self, hash: null };
+        const recalculatedHash = SHA256(
+          JSON.stringify(currentBlock)
+        ).toString();
         resolve(currentHash === recalculatedHash);
       } catch (error) {
         reject(false);
