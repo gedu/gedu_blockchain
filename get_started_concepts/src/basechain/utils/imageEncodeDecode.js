@@ -8,7 +8,7 @@ function encodeImage(pathToFile) {
 }
 
 function decodeImage(encodedFile) {
-  const pathFile = "./src/assets/test-pattern-decoded.jpg";
+  const pathFile = "./src/basechain/assets/test-pattern-decoded.jpg";
   const fileHex = Buffer.from(encodedFile, "hex");
   fs.writeFileSync(path.resolve(pathFile), fileHex);
 }
