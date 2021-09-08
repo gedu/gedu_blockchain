@@ -17,7 +17,7 @@ eth.getGasPrice((error, gasPrice) => {
     console.log("Gas Price error: ", error);
   }
 });
-/*
+
 const rawTransaction = {
   nonce: 0x04,
   to: receivingAddress,
@@ -47,4 +47,3 @@ eth.sendSignedTransaction(
     }
   }
 );
-*/

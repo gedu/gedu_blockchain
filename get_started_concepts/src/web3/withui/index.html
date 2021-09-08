@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Deploy a Remix Contract</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <h1>Deploy a Remix Contract</h1>
+        <label for="message">This site writes a secret message to the Ethereum
+            blockchain!</label>
+        <input id="userInput" type="text">
+
+        <button id="setMessageButton">Set secret message</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+
+    <script>
+
+        // Connect a the web3 provider
+        /*if (typeof web3 !== 'undefined') {
+            //old way to get MetaMask Provider -> https://medium.com/valist/how-to-connect-web3-js-to-metamask-in-2020-fee2b2edf58a
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+        }*/
+        const abi = [
+                    {
+                        "constant": false,
+                        "inputs": [
+                            {
+                                "name": "x",
+                                "type": "string"
+                            }
+                        ],
+                        "name": "setMessage",
+                        "outputs": [],
+                        "payable": false,
+                        "stateMutability": "nonpayable",
+                        "type": "function"
+                    },
+                    {
+                        "constant": true,
+                        "inputs": [],
+                        "name": "getMessage",
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "string"
+                            }
+                        ],
+                        "payable": false,
+                        "stateMutability": "view",
+                        "type": "function"
+                    }
+                ];
+        const address = '0xCF54b20F8886453B8a066474e500Ba031c0e2CF2';
+        let remixContract;
+
+        if (window.ethereum) {
+            console.log('ETH');
+            //old way to get MetaMask Provider -> https://medium.com/valist/how-to-connect-web3-js-to-metamask-in-2020-fee2b2edf58a
+            window.ethereum.request({method: 'eth_requestAccounts'}).then(() => {
+                web3 = new Web3(window.ethereum);
+                web3.eth.getAccounts().then((accounts) => {
+                    console.log('ACCOUNT: ', accounts[0]);
+                    web3.eth.defaultAccount = accounts[0];
+                });
+                remixContract = new web3.eth.Contract(abi, address);
+            });
+            
+        } else {
+            console.log('PROVIDER');
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+            web3.eth.getAccounts().then((accounts) => {
+                    console.log('ACCOUNT: ', accounts[0]);
+                    web3.eth.defaultAccount = accounts[0];
+                });
+            remixContract = new web3.eth.Contract(abi, address);
+        }
+        
+        // Need to wait for ethereum
+        // web3.eth.getAccounts().then((accounts) => {
+        //     console.log('ACCOUNT: ', accounts[0]);
+        //     web3.eth.defaultAccount = accounts[0];
+        // });
+
+        $("#setMessageButton").click(function () {
+            remixContract.methods.setMessage($("#userInput").val()).send({
+                from: web3.eth.defaultAccount,
+                gas: 1500000,
+                gasPrice: '30000000000000',
+            }).on('transactionHash', function(hash){
+                console.log("transactionHash: ", hash);
+            })
+            .on('receipt', function(receipt){
+                console.log("receipt: ", receipt);
+            })
+            .on('confirmation', function(confirmationNumber, receipt){
+                console.log("confirmation: ", confirmationNumber, receipt);
+            })
+            .on('error', function(error, receipt) {
+                console.log("error: ", error, receipt);
+            });
+        });
+
+    </script>
+</body>
+
+</html>
