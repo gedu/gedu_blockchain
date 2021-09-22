@@ -24,6 +24,7 @@ const mnemonic = fs.readFileSync(".secret").toString().trim();
 const infuraUrl = fs.readFileSync(".infurainfo").toString().trim();
 const metamaskAccount = fs.readFileSync(".metamaskaccount").toString().trim();
 //created: 0xcC334F48DDB1BE25ebe8d39cC2c4C794De5CC8f1
+//truffle migrate --reset --network rinkeby
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
